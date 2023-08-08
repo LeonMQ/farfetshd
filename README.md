@@ -23,7 +23,7 @@ It only relies on 2 external commands (stat and awk), for the storage option. If
 
 ## Installation
 
-Put farfetshd.sh somewhere in your path.
+Put farfetshd.sh somewhere in your path and run `chmod +x farfetshd.sh`.
 
 ## Configuration 
 
