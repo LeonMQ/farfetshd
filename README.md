@@ -2,15 +2,13 @@
 
 ## Sample output
 
-```
-
+``` 
  🐧: Fedora 37 (6.3.12)
  🧠: i5-1240P 2.1GHz 35°C
  🐏: 3.0/8GB 38%
  💾: 19.3/254G 7.4% 30.8°C
  🔋: 99% Full battery
  ⌚: 0d 10h 50m
-
 ```
 
 ## Description
@@ -78,12 +76,10 @@ The first function is config. In there you write what options you want to displa
 Speed testing was done by running:
 
 ``` 
-
 #! /bin/sh
 time for run in {1..10000}; do
     ./farfetshd.sh > /dev/null 2>&1;
 done
-
 ```
 
 The real time was recorded.
@@ -93,7 +89,6 @@ The real time was recorded.
 **Default** Config:
 
 ``` 
-
 config(){
 os
 cpu
@@ -102,13 +97,11 @@ storage
 battery
 uptime
 }
-
 ```
 
 **NoStor** Config:
 
 ``` 
-
 config(){
 os
 cpu
@@ -116,20 +109,17 @@ memory
 battery
 uptime
 }
-
 ```
 
 **Small** Config:
 
 ``` 
-
 config(){
 ossmall
 cpusmall
 memorysmall
 batterysmall
 }
-
 ```
 
 ### Results
@@ -142,6 +132,9 @@ batterysmall
 | time 4  | 147.307     | 76.110     | 67.140    |
 | time 5  | 143.440     | 77.090     | 66.454    |
 | Average | 148.601     | 75.719     | 66.127    |
+
+Storage does make a large impact on the speed, so the use of external programs is a detriment. The difference between NoStor and Small is negligible.
+I suspect that the assochw function is also rather slow, perhaps having a set up script that stores the values in your shrc could improve speeds as they should be *relatively* static.
 
 ## Inspiration
 
