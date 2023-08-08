@@ -1,4 +1,4 @@
-!/bin/sh
+#!/bin/sh
 config(){
 os
 cpu
@@ -12,7 +12,7 @@ assochw(){
     fi
     count=0
     for find in /sys/class/hwmon/*; do
-        read -r content < $find/name
+        read -r content < "$find"/name
         case $content in
             *BAT*) bl=$find; ;;
             *AC*) pl=$find; ;;
@@ -43,7 +43,7 @@ cpu(){
     else
         cf="$cf""MHz"
     fi
-    read -r ct < $cl/temp1_input
+    read -r ct < "$cl"/temp1_input
     ct=${ct%%???}
     printf " %s: %s %s %i%s\n" "🧠" "$cn" "$cf" "$ct" "°C"
 }
@@ -65,8 +65,8 @@ memory(){
             SReclaimable) mr=${info% *}; ;; # RAM active in the system kibibyte
         esac
     done < /proc/meminfo
-    mu=$(($mt-$mf-$mb-$mc-$mr)) # get ram used in kibibytes
-    mp=$((($mu*100)/$mt)) # get usage percentage
+    mu=$((mt-mf-mb-mc-mr)) # get ram used in kibibytes
+    mp=$(((mu*100)/mt)) # get usage percentage
     mt=$((mt/976562)) #kibibytes to gigabytes
     mu=$((mu/976)) #convert used ram from kibibytes to megabytes
     mui=${mu%???}
@@ -106,16 +106,16 @@ battery(){
             POWER_SUPPLY_ENERGY_NOW) ben=$info; ;; # The present battery capacity in microwatthours
             POWER_SUPPLY_CAPACITY) bp=$info; ;; # The present battery percentage
         esac
-    done < $bl/device/uevent
+    done < "$bl"/device/uevent
     while read -r line; do
         case $line in
             POWER_SUPPLY_ONLINE*) ps=${line#*=}; ;; # If the laptop is currently plugged in
         esac
-    done < $pl/device/uevent
+    done < "$pl"/device/uevent
     if [ "$bc" != "$bpn" ] && [ -z "$bc" ]; then
         bc="$bpn"
     fi
-    if [ -z "$bcf" -a "$bcn" ]; then
+    if [ -z "$bcf" ] && [ -z "$bcn" ]; then
         bef=${bef%???}
         bvf=${bvf%???}
         ben=${ben%???}
@@ -156,7 +156,7 @@ batterysmall(){
         case $line in
             POWER_SUPPLY_CAPACITY) bp=$info; ;; # The present battery percentage
         esac
-    done < $bl/device/uevent
+    done < "$bl"/device/uevent
     printf " %s: %i%%\n" "🔋" "$bp"
 }
 ossmall(){
@@ -192,14 +192,13 @@ storage(){
     su=${s%% *} # get usued space of SSD
     sr=${sr%?????????} # Convert total space to gigabytes approx
     su=${su%???????} # Convert used space to 100s of mega bytes approx
-    sdr=1
-    sp=$(($su*10/$sr)) #  get space usage in per mille
+    sp=$((su*10/sr)) #  get space usage in per mille
     spi=${sp%?} # get integer compoent of space usage percent
-    spd=$(($sp%$spi)) # get decimal  compoent of space usage percent
+    spd=$((sp%spi)) # get decimal  compoent of space usage percent
     sug=${su%??}
-    sud=$(($su%($sug*100)))
+    sud=$((su%(sug*100)))
     if [ -n "$pl" ]; then
-        read -r st < $sl/temp1_input
+        read -r st < "$sl"/temp1_input
         sti=${st%%???}
         std=${st##??}
         std=${std%%??}
@@ -211,6 +210,6 @@ storage(){
 }
 uptime(){
     IFS=. read -r U _ < /proc/uptime # get uptime in seconds
-    printf " %s: %id %ih %im\n" "⌚" "$(($U/60/60/24))" "$(($U/60/60%24))" "$(($U/60%60))"
+    printf " %s: %id %ih %im\n" "⌚" "$((U/60/60/24))" "$((U/60/60%24))" "$((U/60%60))"
 }
 config
