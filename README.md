@@ -67,7 +67,7 @@ The first function is config. In there you write what options you want to displa
 
     + prints the gigabytes of storage used and total, the percentage used, and the tempurature of your nvme drive (if present)
 
-    + **Warning** this options significantly slows down the script (see [speed test results](#Results)
+    + **Warning** this options significantly slows down the script 
 
 * uptime
 
