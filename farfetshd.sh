@@ -3,6 +3,7 @@ config(){
 os
 cpu
 memory
+storage
 battery
 uptime
 }
@@ -30,7 +31,7 @@ cpu(){
     fi
     while  IFS=":" read -r line info; do
         case $line in
-            model\ name*) cn=${info##*) }; ;;
+            model\ name*) cn=${info##* ) }; ;;
             cpu\ MHz*) cf=${info##* }; break;;
         esac
     done < /proc/cpuinfo
@@ -67,15 +68,15 @@ memory(){
     done < /proc/meminfo
     mu=$((mt-mf-mb-mc-mr)) # get ram used in kibibytes
     mp=$(((mu*100)/mt)) # get usage percentage
-    mt=$((mt/976562)) #kibibytes to gigabytes
-    mu=$((mu/976)) #convert used ram from kibibytes to megabytes
+    mt=$((mt/976565)) #kibibytes to gigabytes
+    mu=$((mu/977)) #convert used ram from kibibytes to megabytes
     mui=${mu%???}
     if [ ${#mu} = 4 ]; then
         mud=${mu%??}
         mud=${mud#?}
         mm="$mui.$mud/$mt""GB"
     elif [ ${#mu} -le 3 ]; then
-        mm="$mu/$mt""GB"
+        mm="0.""$mu/$mt""GB"
     else
         mm="$mui/$mt""GB"
     fi
@@ -87,7 +88,7 @@ memorysmall(){
             MemTotal) mt=${info% *}; ;;
         esac
     done < /proc/meminfo 
-    mt=$((((mt/976)/1000)*1000))
+    mt=$((((mt/977)/1000)*1000))
     printf " %s: %i%s\n" "🐏" "$mt" "MB"
 }
 battery(){
@@ -178,6 +179,8 @@ os(){
     done < /usr/lib/os-release
     D=${D%\"}
     D=${D%% *} # shorten distro name
+    V=${V%\"}
+    V=${V#\"}
     read -r K < /proc/version # get kernel information
         K=${K%%-*} # shorten kernel name step 1
         K=${K##* }  # shorten kernel name step 2
