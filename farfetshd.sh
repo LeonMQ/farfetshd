@@ -102,10 +102,10 @@ memory(){
     mp=$(((mu*100)/mt)) # get usage percentage
     mt=$((mt/976565)) #kibibytes to gigabytes
     mu=$((mu/977)) #convert used ram from kibibytes to megabytes
-    mui=${mu%???} #integer component of used RAM megabytes
+    mui=${mu%???} #integer component of used RAM gigabytes
     if [ ${#mu} = 4 ]; then
-        mud=${mu%??} #decimal component of used RAM megabytes
-        mud=${mud#?} #decimal component of used RAM megabytes
+        mud=${mu%??} #decimal component of used RAM gigabytes
+        mud=${mud#?} #decimal component of used RAM gigabytes
         mm="$mui.$mud/$mt""GB" 
     elif [ ${#mu} -le 3 ]; then
         mm="0.""$mu/$mt""GB"
