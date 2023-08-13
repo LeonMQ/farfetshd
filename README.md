@@ -25,7 +25,7 @@ Put farfetshd.sh somewhere in your path and Run `chmod +x farfetshd.sh` and put 
 
 ## Configuration 
 
-The first function is config. In there you write what options you want to display, one per line.
+The first function is config. In there you write what options you want to display, in order, one per line.
 
 ### Options
 
