@@ -3,25 +3,25 @@
 ## Sample output
 
 ``` 
- 🐧: Fedora 37 (6.3.12)
- 🧠: i5-1240P 2.1GHz 35°C
- 🐏: 3.0/8GB 38%
- 💾: 19.3/254G 7.4% 30.8°C
- 🔋: 99% Full battery
- ⌚: 0d 10h 50m
+ 🐧: Fedora 37 (6.4.6)
+ 🧠: Intel i5-1240P 1.0GHz 39°C
+ 🐏: 4.0/8GB 50%
+ 💾: 19.11/254G 7.5% 32.8°C
+ 🔋: 99% Wall power
+ ⌚: 0d 10h 46m
 ```
 
 ## Description
 
 This is a shell script that prints out some system information, it is written in POSIX shell (I used dash).
 
-Made for linux, tested on Fedora workstation 37, please let me know what errors you have, and what distro you run.
+Made for GNU/Linux, tested on Fedora workstation 37, please let me know what errors you have, and what distro you run.
 
 It only relies on 2 external commands (stat and awk), for the storage option. If you don't want storage, then no external commands are used. (*If someone knows a method to get this info without external commands it would be greatly appreciated*).
 
 ## Installation
 
-Put farfetshd.sh somewhere in your path and run `chmod +x farfetshd.sh`.
+Put farfetshd.sh somewhere in your path and Run `chmod +x farfetshd.sh` and put farfetshd.sh somewhere in your path, or use `./farfetshd.sh`.
 
 ## Configuration 
 
@@ -39,7 +39,7 @@ The first function is config. In there you write what options you want to displa
 
 * memory
 
-    + prints the gigbytes of RAM used and total, and the percentage used
+    + prints the gigabytes of RAM used and total, and the percentage used
 
 * memorysmall
 
@@ -122,16 +122,18 @@ batterysmall
 }
 ```
 
+Additionally I tested [dylanaraps/pfetch](https://github.com/dylanaraps/pfetch) with `PF_INFO="os host kernel uptime memory"`.
+
 ### Results
 
-|         | Default (s) | NoStor (s) | Small (s) |
-|---------|-------------|------------|-----------|
-| time 1  | 153.043     | 73.553     | 64.115    |
-| time 2  | 159.606     | 76.172     | 68.157    |
-| time 3  | 139.607     | 75.669     | 64.767    |
-| time 4  | 147.307     | 76.110     | 67.140    |
-| time 5  | 143.440     | 77.090     | 66.454    |
-| Average | 148.601     | 75.719     | 66.127    |
+|         | Default (s) | NoStor (s) | Small (s) | pfetch (s) |
+|---------|-------------|------------|-----------|------------|
+| time 1  | 153.043     | 73.553     | 64.115    | 126.016    |
+| time 2  | 159.606     | 76.172     | 68.157    | 92.465     |
+| time 3  | 139.607     | 75.669     | 64.767    | 97.727     |
+| time 4  | 147.307     | 76.110     | 67.140    | 101.517    |
+| time 5  | 143.440     | 77.090     | 66.454    | 89.493     |
+| Average | 148.601     | 75.719     | 66.127    | 101.4436   |
 
 Storage does make a large impact on the speed, so the use of external programs is a detriment. The difference between NoStor and Small is negligible.
 I suspect that the assochw function is also rather slow, perhaps having a set up script that stores the values in your shrc could improve speeds as they should be *relatively* static.

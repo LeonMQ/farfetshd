@@ -1,11 +1,15 @@
 #!/bin/sh
 config(){
-os
-cpu
-memory
-storage
-battery
-uptime
+    os
+    #ossmall
+    cpu
+    #cpusmall
+    memory
+    #memorysmall
+    storage
+    battery
+    #batterysmall
+    uptime
 }
 assochw(){
     if [ -n "$hwr" ]; then
@@ -26,40 +30,68 @@ assochw(){
     hwr=1
 }
 cpu(){
+    # Seeing if we will be able to find cpu temp
     if [ -z "$hwr" ]; then
         assochw
     fi
+    # Getting cpu name and frequency information 
     while  IFS=":" read -r line info; do
         case $line in
-            model\ name*) cn=${info##* ) }; ;;
+            vendor_id*) cv=$info; ;;
+            model\ name*) cn=${info## }; ;;
             cpu\ MHz*) cf=${info##* }; break;;
         esac
     done < /proc/cpuinfo
+    # Shortening CPU name
+    case $cv in 
+        *el)cv="Intel"; 
+            cn=${cn##*) };
+            cn="$cv $cn";;
+        *MD)cv="AMD"; 
+            cn=${cn##*D };
+            cn=${cn%% w*};
+            cn="$cv $cn"; ;;
+        *) cn="🤷"; ;;
+    esac
     cf=${cf%%.*} # remove decimal from frequency
     if [ ${#cf} = 4 ]; then
         cf=${cf%??} #partial converion to GHz 
-        cfi=${cf%?}
-        cfd=$((cf%(cfi*10)))
+        cfi=${cf%?} #interger component of GHz
+        cfd=$((cf%(cfi*10))) #decimal compoent of GHz
         cf="$cfi.$cfd""GHz"
     else
-        cf="$cf""MHz"
+        cf="$cf""MHz" # I reckon that sub 1 GHz is more likely than sup 10 GHz
     fi
-    read -r ct < "$cl"/temp1_input
-    ct=${ct%%???}
+    read -r ct < "$cl"/temp1_input # Getting cpu temperature
+    ct=${ct%%???} #  Converting temp to Celsius
     printf " %s: %s %s %i%s\n" "🧠" "$cn" "$cf" "$ct" "°C"
 }
 cpusmall(){
+    # Getting cpu name
     while  IFS=":" read -r line info; do
         case $line in
-            model\ name*) cn=${info##*) }; break;;
+            vendor_id*) cv=$info; ;;
+            model\ name*) cn=${info## }; break;;
         esac
     done < /proc/cpuinfo
+    # Shortening CPU name
+    case $cv in
+        *el)cv="Intel"; 
+            cn=${cn##*) };
+            cn="$cv $cn";;
+        *MD)cv="AMD"; 
+            cn=${cn##*D };
+            cn=${cn%% w*};
+            cn="$cv $cn"; ;;
+        *) cn="🤷"; ;; # If you arn't AMD or Intel, are you even computing
+    esac
     printf " %s: %s\n" "🧠" "$cn"
 }
 memory(){
+    # Getting memory info
     while IFS=":" read -r name info; do
         case $name in
-            MemTotal) mt=${info% *}; ;;
+            MemTotal) mt=${info% *}; ;; # Total RAM kibibytes
             MemFree) mf=${info% *}; ;; # Usable RAM kibibyte
             Cached) mc=${info% *}; ;; # RAM active in the system kibibyte
             Buffers) mb=${info% *}; ;; # RAM active in the system kibibyte
@@ -70,11 +102,11 @@ memory(){
     mp=$(((mu*100)/mt)) # get usage percentage
     mt=$((mt/976565)) #kibibytes to gigabytes
     mu=$((mu/977)) #convert used ram from kibibytes to megabytes
-    mui=${mu%???}
+    mui=${mu%???} #integer component of used RAM megabytes
     if [ ${#mu} = 4 ]; then
-        mud=${mu%??}
-        mud=${mud#?}
-        mm="$mui.$mud/$mt""GB"
+        mud=${mu%??} #decimal component of used RAM megabytes
+        mud=${mud#?} #decimal component of used RAM megabytes
+        mm="$mui.$mud/$mt""GB" 
     elif [ ${#mu} -le 3 ]; then
         mm="0.""$mu/$mt""GB"
     else
